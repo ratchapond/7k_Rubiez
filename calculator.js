@@ -22,12 +22,13 @@
       if (!Number.isSafeInteger(p[key]) || p[key] < (positive ? 1 : 0) || p[key] > 1000000)
         throw new Error("กรอกจำนวนเต็ม 0–1,000,000");
     }
+    if (p.paidBoxes > 1169) throw new Error("ซื้อกล่องได้สูงสุด 1,169 กล่องต่อวัน (ขั้นราคา 150 รูบี้ซื้อได้ 999 กล่อง)");
     const mode = modes[p.mode];
     const tier50 = Math.min(p.paidBoxes, 20);
     const tier80 = Math.min(Math.max(p.paidBoxes - 20, 0), 50);
     const tier100 = Math.min(Math.max(p.paidBoxes - 70, 0), 50);
     const tier120 = Math.min(Math.max(p.paidBoxes - 120, 0), 50);
-    const tier150 = Math.max(p.paidBoxes - 170, 0), 999);
+    const tier150 = Math.min(Math.max(p.paidBoxes - 170, 0), 999);
     const dailyCost = tier50 * 50 + tier80 * 80 + tier100 * 100 + tier120 * 120 + tier150 * 150;
     const cost = dailyCost * p.days;
     const boxKeys = (p.paidBoxes + p.freeBoxes) * p.keysPerBox;
@@ -50,7 +51,7 @@
     };
     const without = scenario(false), withMonthly = scenario(true);
     const result = {
-      mode, dailyKeys, regenMinutes, tier50, tier80, tier100, dailyCost, cost, boxKeys, totalKeys, baseRuns,
+      mode, dailyKeys, regenMinutes, tier50, tier80, tier100, tier120, tier150, dailyCost, cost, boxKeys, totalKeys, baseRuns,
       awards, bonus, runs, remainingKeys: totalKeys + bonus - runs * mode.keys,
       without, withMonthly, selected: p.monthly ? withMonthly : without,
       batchRuby: p.heroesPerRun * p.rubyPerHero

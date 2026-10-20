@@ -1,6 +1,8 @@
 const assert = require("node:assert/strict");
 const test = require("node:test");
-const { calculate, resetValues, fixed } = require("./calculator.js");
+const { calculate: calculateRaw, resetValues, fixed, defaults } = require("./calculator.js");
+// Explicit workbook fixture; UI defaults may change without changing these reference scenarios.
+const calculate = (p = {}) => calculateRaw({ paidBoxes: 120, freeBoxes: 1, days: 8, heroesPerRun: 5, ...p });
 
 test("normal and nightmare scenarios, with and without the key pass", () => {
   for (const [mode, keyPass, runs, bonus, without, withMonthly] of [
@@ -21,13 +23,20 @@ test("normal and nightmare scenarios, with and without the key pass", () => {
   }
 });
 test("paid box tier boundaries; free boxes add keys without cost", () => {
-  for (const [paidBoxes, dailyCost] of [[0,0],[1,50],[20,1000],[21,1080],[70,5000],[71,5100],[120,10000]]) {
+  for (const [paidBoxes, dailyCost] of [[0,0],[1,50],[20,1000],[21,1080],[70,5000],[71,5100],[120,10000],[121,10120],[170,16000],[171,16150],[1169,165850]]) {
     const r = calculate({ paidBoxes, days: 1 });
     assert.equal(r.cost, dailyCost);
     assert.equal(r.boxKeys, (paidBoxes + 1) * 60);
-    assert.equal(r.tier50 + r.tier80 + r.tier100, paidBoxes);
+    assert.equal(r.tier50 + r.tier80 + r.tier100 + r.tier120 + r.tier150, paidBoxes);
   }
   assert.equal(calculate({ paidBoxes: 0, freeBoxes: 2 }).cost, 0);
+});
+test("150-ruby tier permits 999 boxes; reject over-cap purchases without charging partially", () => {
+  assert.equal(calculate({ paidBoxes: 1169 }).tier150, 999);
+  assert.equal(calculate({ paidBoxes: 1169, freeBoxes: 100, days: 2 }).cost, 331700);
+  assert.throws(() => calculate({ paidBoxes: 1170 }), /1,169/);
+  for (const key of ["paidBoxes", "freeBoxes", "days", "heroesPerRun"]) assert.equal(defaults[key], 0);
+  assert.equal(calculateRaw({}).cost, 0);
 });
 test("zero days has zero costs and rewards", () => {
   const r = calculate({ days: 0 });

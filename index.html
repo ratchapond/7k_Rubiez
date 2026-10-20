@@ -6,9 +6,9 @@
   <meta name="theme-color" content="#11131b">
   <meta name="description" content="เครื่องคำนวณฟาร์มรูบี้ 7K เปรียบเทียบโหมดปกติและฝันร้าย พร้อมคำนวณกุญแจ EXP และกำไรสุทธิ">
   <title>7K Rubiez — เครื่องคำนวณฟาร์มรูบี้</title>
-  <link rel="stylesheet" href="./styles.css?v=4">
-  <script src="./calculator.js?v=4" defer></script>
-  <script src="./app.js?v=4" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=5">
+  <script src="./calculator.js?v=5" defer></script>
+  <script src="./app.js?v=5" defer></script>
 </head>
 <body>
 <header class="topbar">
@@ -27,7 +27,7 @@
         <label class="mode-card"><input type="radio" name="mode" value="nightmare"><span class="mode-icon" aria-hidden="true">☾</span><strong>ฟาร์มฝันร้าย</strong><span>12 กุญแจ/รอบ</span><small>รับโบนัสทุก 80 รอบ</small></label>
       </fieldset>
       <p class="micro" id="mode-note"></p>
-      <div class="fields team-fields"><label>จำนวนมอนที่ฟาร์ม / รอบ<div class="input-wrap"><input name="heroesPerRun" type="number" min="0" max="1000000" step="1" value="5" required aria-describedby="heroes-note"><span>ตัว</span></div></label></div>
+      <div class="fields team-fields"><label>จำนวนมอนที่ฟาร์ม / รอบ<div class="input-wrap"><input name="heroesPerRun" type="number" min="0" max="1000000" step="1" value="0" required aria-describedby="heroes-note"><span>ตัว</span></div></label></div>
       <p class="micro" id="heroes-note"></p>
       <label class="toggle-row"><span><strong>บัฟรายเดือน EXP +10%</strong><small>เพิ่ม EXP ที่ได้รับต่อตัวต่อรอบ</small></span><input type="checkbox" name="monthly" checked role="switch"><span class="switch" aria-hidden="true"></span></label>
       <label class="toggle-row"><span><strong>พาสกุญแจ</strong><small id="pass-note">ฟื้นฟู 1 ดอกทุก 3 นาที · 480 ดอก/วัน</small></span><input type="checkbox" name="keyPass" role="switch"><span class="switch" aria-hidden="true"></span></label>
@@ -35,13 +35,13 @@
     <section class="panel">
       <div class="section-heading"><span class="step">02</span><h2>แผนกุญแจของคุณ</h2></div>
       <div class="fields">
-        <label>กล่องที่ซื้อ / วัน<div class="input-wrap"><input name="paidBoxes" type="number" min="0" max="1000000" step="1" value="120" required><span>กล่อง</span></div></label>
-        <label>กล่องฟรี / วัน<div class="input-wrap"><input name="freeBoxes" type="number" min="0" max="1000000" step="1" value="1" required><span>กล่อง</span></div></label>
+        <label>กล่องที่ซื้อ / วัน<div class="input-wrap"><input name="paidBoxes" type="number" min="0" max="1169" step="1" value="0" required aria-describedby="box-limit"><span>กล่อง</span></div></label>
+        <label>กล่องฟรี / วัน<div class="input-wrap"><input name="freeBoxes" type="number" min="0" max="1000000" step="1" value="0" required><span>กล่อง</span></div></label>
         <label>กุญแจต่อกล่อง (คงที่)<div class="input-wrap"><input name="keysPerBox" type="number" value="60" readonly><span>ดอก</span></div></label>
-        <label>ระยะเวลาฟาร์ม<div class="input-wrap"><input name="days" type="number" min="0" max="1000000" step="1" value="8" required><span>วัน</span></div></label>
+        <label>ระยะเวลาฟาร์ม<div class="input-wrap"><input name="days" type="number" min="0" max="1000000" step="1" value="0" required><span>วัน</span></div></label>
       </div>
-      <div class="price-strip"><span>20 กล่องแรก <b>50</b></span><span>50 กล่องถัดไป <b>80</b></span><span>กล่องที่ 71+ <b>100</b></span></div>
-      <p class="micro">ราคาเป็นรูบี้ต่อกล่องที่ซื้อ เริ่มนับขั้นราคาใหม่ทุกวัน</p>
+      <div class="price-strip"><span>กล่อง 1–20 <b>50</b></span><span>กล่อง 21–70 <b>80</b></span><span>กล่อง 71–120 <b>100</b></span><span>กล่อง 121–170 <b>120</b></span><span>กล่อง 171–1,169 <b>150</b></span></div>
+      <p class="micro" id="box-limit">ราคาเป็นรูบี้ต่อกล่องที่ซื้อ ขั้น 150 ซื้อได้ 999 กล่อง รวมซื้อสูงสุด 1,169 กล่อง/วัน ไม่รวมกล่องฟรี เริ่มนับขั้นราคาใหม่ทุกวัน</p>
     </section>
     <section class="panel">
       <div class="section-heading"><span class="step">03</span><h2>EXP และของรางวัล</h2></div>
@@ -65,7 +65,7 @@
     </div>
     <details class="panel method"><summary>วิธีคำนวณและการปรับจาก Excel</summary><div>
       <p>แยกกล่องที่ซื้อและกล่องฟรี: ค่าเริ่มต้นซื้อ 120 + ฟรี 1 = 121 กล่องต่อวัน กล่องฟรีให้กุญแจแต่ไม่มีต้นทุน</p>
-      <p>ราคาขั้นบันได: 20 กล่องแรก × 50 + สูงสุด 50 กล่องถัดไป × 80 + กล่องที่เกิน 70 × 100 รูบี้ สูตรเดิม B21 บังคับขั้นต่ำ 50 กล่อง จึงปรับให้ตรงจำนวนที่ซื้อจริง</p>
+      <p>ราคาขั้นบันได: 20 กล่องแรก × 50 + 50 กล่องถัดไป × 80 + 50 กล่องถัดไป × 100 + 50 กล่องถัดไป × 120 + สูงสุด 999 กล่องถัดไป × 150 รูบี้ รวมซื้อได้ไม่เกิน 1,169 กล่องต่อวัน กล่องฟรีไม่นับรวมเพดานนี้</p>
       <p>รอบพื้นฐาน = ปัดลง(กุญแจรวม ÷ กุญแจต่อรอบ) โบนัสคิดจากรอบพื้นฐานเพียงครั้งเดียวตาม Excel B29–B30 ไม่ทบโบนัสจากรอบที่ได้เพิ่ม และนับรอบสะสมตลอดช่วงที่ฟาร์ม</p>
       <p>รอบจนตัน = ปัดขึ้น(EXP ที่ต้องใช้ ÷ EXP ต่อรอบ) จำนวนตัวตัน = ปัดลง(รอบรวม × ตัวต่อรอบ ÷ รอบจนตัน) ตาม Excel จึงเป็นค่าประมาณแบบรวมความคืบหน้าตัวละคร ไม่ได้บังคับให้จบทั้งชุดพร้อมกัน</p>
       <p>แก้ B44–B48 ที่อ้างอิงคลาดเคลื่อนให้ตรงสถานะบัฟ ผลลัพธ์เป็นยอดรวมตลอดระยะเวลาฟาร์ม และกุญแจโบนัสใช้เกณฑ์ของโหมดที่เลือก</p>

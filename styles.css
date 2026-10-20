@@ -4,3 +4,4 @@
 .input-wrap:has(input[readonly]),.input-wrap:has(input:disabled){background:#353535;border-color:#555;box-shadow:none}.input-wrap input[readonly],.input-wrap input:disabled{color:#bdbdbd;cursor:not-allowed;appearance:textfield}.input-wrap:has(input[readonly]) span,.input-wrap:has(input:disabled) span{color:#aaa}.input-wrap input[readonly]::-webkit-inner-spin-button,.input-wrap input[readonly]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .team-fields{margin-top:18px}
 .field-note{display:block;color:var(--muted);font-size:11px;margin-top:6px}
+.price-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:10px 14px}.price-strip span{display:flex;justify-content:space-between}
