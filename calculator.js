@@ -10,7 +10,7 @@
     keyPass: false, extraKeys: 110, bonusKeys: 20, monthly: true
   });
   function calculate(input) {
-    const p = { ...defaults, ...input };
+    const p = { ...defaults, ...input, targetExp: defaults.targetExp };
     if (!modes[p.mode]) throw new Error("กรุณาเลือกโหมดฟาร์ม");
     for (const key of Object.keys(defaults)) {
       if (typeof defaults[key] !== "number") continue;

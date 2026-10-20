@@ -7,7 +7,7 @@ const text = (id, value) => { document.getElementById(id).textContent = value; }
 function read() {
   const values = { mode: form.elements.mode.value, monthly: form.elements.monthly.checked, keyPass: form.elements.keyPass.checked };
   for (const [key, value] of Object.entries(defaults)) {
-    if (typeof value === "number") values[key] = form.elements[key].value === "" ? NaN : Number(form.elements[key].value);
+    if (typeof value === "number") values[key] = key === "targetExp" ? defaults.targetExp : (form.elements[key].value === "" ? NaN : Number(form.elements[key].value));
   }
   return values;
 }
@@ -15,7 +15,7 @@ function fill(p) {
   form.elements.mode.value = p.mode;
   form.elements.monthly.checked = p.monthly;
   form.elements.keyPass.checked = p.keyPass;
-  for (const [key, value] of Object.entries(defaults)) if (typeof value === "number") form.elements[key].value = p[key];
+  for (const [key, value] of Object.entries(defaults)) if (typeof value === "number") form.elements[key].value = key === "targetExp" ? defaults.targetExp : p[key];
 }
 function render() {
   const p = read();

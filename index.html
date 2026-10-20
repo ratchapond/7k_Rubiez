@@ -6,9 +6,9 @@
   <meta name="theme-color" content="#11131b">
   <meta name="description" content="เครื่องคำนวณฟาร์มรูบี้ 7K เปรียบเทียบโหมดปกติและฝันร้าย พร้อมคำนวณกุญแจ EXP และกำไรสุทธิ">
   <title>7K Rubiez — เครื่องคำนวณฟาร์มรูบี้</title>
-  <link rel="stylesheet" href="./styles.css">
-  <script src="./calculator.js" defer></script>
-  <script src="./app.js" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=2">
+  <script src="./calculator.js?v=2" defer></script>
+  <script src="./app.js?v=2" defer></script>
 </head>
 <body>
 <header class="topbar">
@@ -45,7 +45,7 @@
       <div class="section-heading"><span class="step">03</span><h2>EXP และของรางวัล</h2></div>
       <div class="fields">
         <label>EXP ต่อตัว / รอบ<div class="input-wrap"><input name="exp" type="number" min="1" max="1000000" step="1" value="1200" required><span>EXP</span></div></label>
-        <label>EXP ที่ต้องใช้จนตัน<div class="input-wrap"><input name="targetExp" type="number" min="1" max="1000000" step="1" value="12500" required><span>EXP</span></div></label>
+        <label>EXP ที่ต้องใช้จนตัน (คงที่)<div class="input-wrap"><input name="targetExp" type="number" value="12500" readonly><span>EXP</span></div></label>
         <label>รูบี้ต่อตัวเมื่อตัน<div class="input-wrap"><input name="rubyPerHero" type="number" min="0" max="1000000" step="1" value="20" required><span>รูบี้</span></div></label>
         <label>กุญแจต่อการรับโบนัส<div class="input-wrap"><input name="bonusKeys" type="number" min="0" max="1000000" step="1" value="20" required><span>ดอก</span></div></label>
         <label>กุญแจฟื้นฟู / วัน (อัตโนมัติ)<div class="input-wrap"><input name="dailyKeys" type="number" value="480" readonly aria-describedby="regen-note"><span>ดอก</span></div></label>

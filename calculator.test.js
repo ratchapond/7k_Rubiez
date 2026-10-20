@@ -41,12 +41,13 @@ test("bonus threshold respects each mode and counts the base rounds only", () =>
     assert.equal(calculate({ ...input, extraKeys: 480 }).bonus, 20);
   }
 });
-test("EXP rounding at exact 10% boundaries", () => {
+test("target EXP is fixed at 12,500 even if older saved values override it", () => {
   const r = calculate({ exp: 100, targetExp: 1100 });
-  assert.equal(r.withMonthly.runsPerHero, 10);
-  assert.equal(r.without.runsPerHero, 11);
+  assert.equal(r.withMonthly.runsPerHero, 114);
+  assert.equal(r.without.runsPerHero, 125);
+  assert.deepEqual(calculate({ targetExp: 0 }), calculate({}));
 });
 test("invalid values are rejected instead of showing misleading totals", () => {
-  for (const input of [{days:NaN},{days:-1},{days:1.5},{exp:0},{targetExp:0},{mode:"unknown"},{paidBoxes:Infinity}])
+  for (const input of [{days:NaN},{days:-1},{days:1.5},{exp:0},{mode:"unknown"},{paidBoxes:Infinity}])
     assert.throws(() => calculate(input));
 });
