@@ -9,14 +9,18 @@
     mode: "normal", paidBoxes: 120, freeBoxes: 1, days: 8, heroesPerRun: 5,
     exp: 1200, keyPass: false, extraKeys: 110, monthly: true, ...fixed
   });
+  const resetValues = Object.freeze({
+    ...defaults, paidBoxes: 0, freeBoxes: 0, days: 0, heroesPerRun: 0,
+    exp: 0, extraKeys: 110, monthly: false, keyPass: false
+  });
   function calculate(input) {
     const p = { ...defaults, ...input, ...fixed };
     if (!modes[p.mode]) throw new Error("กรุณาเลือกโหมดฟาร์ม");
     for (const key of Object.keys(defaults)) {
       if (typeof defaults[key] !== "number") continue;
-      const positive = ["keysPerBox", "exp", "targetExp", "heroesPerRun"].includes(key);
+      const positive = ["keysPerBox", "targetExp"].includes(key);
       if (!Number.isSafeInteger(p[key]) || p[key] < (positive ? 1 : 0) || p[key] > 1000000)
-        throw new Error("กรอกจำนวนเต็ม 0–1,000,000 โดย EXP และจำนวนมอนต่อรอบต้องมากกว่า 0");
+        throw new Error("กรอกจำนวนเต็ม 0–1,000,000");
     }
     const mode = modes[p.mode];
     const tier50 = Math.min(p.paidBoxes, 20);
@@ -36,9 +40,9 @@
     const scenario = monthly => {
       // Integer ratio avoids floating-point errors at exact EXP boundaries.
       const exp = p.exp * (monthly ? 110 : 100) / 100;
-      const runsPerHero = Math.ceil(p.targetExp * 100 / (p.exp * (monthly ? 110 : 100)));
+      const runsPerHero = p.exp === 0 ? null : Math.ceil(p.targetExp * 100 / (p.exp * (monthly ? 110 : 100)));
       // Preserve workbook B35/B36: pooled character progress, rounded down.
-      const heroes = Math.floor(runs * p.heroesPerRun / runsPerHero);
+      const heroes = runsPerHero === null ? 0 : Math.floor(runs * p.heroesPerRun / runsPerHero);
       const ruby = heroes * p.rubyPerHero;
       return { exp, runsPerHero, heroes, ruby, profit: ruby - cost };
     };
@@ -53,7 +57,7 @@
       .some(n => !Number.isSafeInteger(n))) throw new Error("ค่ามากเกินช่วงคำนวณ กรุณาลดจำนวนลง");
     return result;
   }
-  const api = { modes, fixed, defaults, calculate };
+  const api = { modes, fixed, defaults, resetValues, calculate };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.RubyCalc = api;
 })(typeof globalThis !== "undefined" ? globalThis : this);

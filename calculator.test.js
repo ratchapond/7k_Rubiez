@@ -1,6 +1,6 @@
 const assert = require("node:assert/strict");
 const test = require("node:test");
-const { calculate } = require("./calculator.js");
+const { calculate, resetValues, fixed } = require("./calculator.js");
 
 test("normal and nightmare scenarios, with and without the key pass", () => {
   for (const [mode, keyPass, runs, bonus, without, withMonthly] of [
@@ -49,8 +49,19 @@ test("target EXP is fixed at 12,500 even if older saved values override it", () 
   assert.deepEqual(calculate({ targetExp: 0 }), calculate({}));
 });
 test("invalid values are rejected instead of showing misleading totals", () => {
-  for (const input of [{days:NaN},{days:-1},{days:1.5},{exp:0},{mode:"unknown"},{paidBoxes:Infinity},{heroesPerRun:0},{heroesPerRun:1.5},{heroesPerRun:NaN}])
+  for (const input of [{days:NaN},{days:-1},{days:1.5},{exp:-1},{mode:"unknown"},{paidBoxes:Infinity},{heroesPerRun:-1},{heroesPerRun:1.5},{heroesPerRun:NaN}])
     assert.throws(() => calculate(input));
+});
+test("reset clears editable numbers except 110 extra keys and safely handles zero EXP", () => {
+  for (const [key, value] of Object.entries(resetValues)) {
+    if (typeof value === "number" && !(key in fixed)) assert.equal(value, key === "extraKeys" ? 110 : 0);
+  }
+  const r = calculate(resetValues);
+  assert.equal(r.selected.profit, 0);
+  assert.equal(r.selected.heroes, 0);
+  assert.equal(r.selected.runsPerHero, null);
+  assert.equal(r.runs, 0);
+  assert.equal(calculate({ exp: 0 }).selected.ruby, 0);
 });
 test("locked rewards and keys ignore stale saved overrides", () => {
   assert.deepEqual(calculate({ keysPerBox: 1, rubyPerHero: 999, bonusKeys: 100 }), calculate({}));

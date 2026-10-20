@@ -1,5 +1,5 @@
 "use strict";
-const { defaults, fixed, calculate, modes } = RubyCalc;
+const { defaults, fixed, resetValues, calculate, modes } = RubyCalc;
 const form = document.querySelector("#settings");
 const storageKey = "7k-rubiez-v1";
 const nf = new Intl.NumberFormat("th-TH", { maximumFractionDigits: 2 });
@@ -38,7 +38,7 @@ function render() {
       without: r.without.profit, with: r.withMonthly.profit,
       difference: r.withMonthly.profit - r.without.profit
     })) text(id, nf.format(val));
-    text("rounds-per-hero", `${nf.format(r.selected.runsPerHero)} รอบจนตันต่อตัว`);
+    text("rounds-per-hero", r.selected.runsPerHero === null ? "กรอก EXP ต่อรอบเพื่อคำนวณรอบจนตัน" : `${nf.format(r.selected.runsPerHero)} รอบจนตันต่อตัว`);
     text("box-keys", `${nf.format(r.boxKeys)} ดอก`);
     text("total-keys", `${nf.format(r.totalKeys)} ดอก`);
     text("base-runs", `${nf.format(r.baseRuns)} รอบ`);
@@ -67,5 +67,5 @@ try {
 } catch { /* Invalid or unavailable storage: use workbook defaults. */ }
 form.addEventListener("input", render);
 form.addEventListener("submit", e => e.preventDefault());
-document.getElementById("reset").addEventListener("click", () => { fill(defaults); render(); });
+document.getElementById("reset").addEventListener("click", () => { fill(resetValues); render(); });
 render();
