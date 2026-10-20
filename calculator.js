@@ -22,7 +22,7 @@
       if (!Number.isSafeInteger(p[key]) || p[key] < (positive ? 1 : 0) || p[key] > 1000000)
         throw new Error("กรอกจำนวนเต็ม 0–1,000,000");
     }
-    if (p.paidBoxes > 1169) throw new Error("ซื้อกล่องได้สูงสุด 1,169 กล่องต่อวัน (ขั้นราคา 150 รูบี้ซื้อได้ 999 กล่อง)");
+    if (p.paidBoxes > 1169) throw new Error("ซื้อกล่องได้สูงสุด 1,169 กล่องต่อวัน");
     const mode = modes[p.mode];
     const tier50 = Math.min(p.paidBoxes, 20);
     const tier80 = Math.min(Math.max(p.paidBoxes - 20, 0), 50);
