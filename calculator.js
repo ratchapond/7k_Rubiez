@@ -6,7 +6,7 @@
   };
   const fixed = Object.freeze({ keysPerBox: 60, targetExp: 12500, rubyPerHero: 20, bonusKeys: 20 });
   const defaults = Object.freeze({
-    mode: "normal", paidBoxes: 120, freeBoxes: 1, days: 8, heroesPerRun: 5,
+    mode: "normal", paidBoxes: 0, freeBoxes: 0, days: 0, heroesPerRun: 0,
     exp: 1200, keyPass: false, extraKeys: 110, monthly: true, ...fixed
   });
   const resetValues = Object.freeze({
@@ -25,8 +25,10 @@
     const mode = modes[p.mode];
     const tier50 = Math.min(p.paidBoxes, 20);
     const tier80 = Math.min(Math.max(p.paidBoxes - 20, 0), 50);
-    const tier100 = Math.max(p.paidBoxes - 70, 0);
-    const dailyCost = tier50 * 50 + tier80 * 80 + tier100 * 100;
+    const tier100 = Math.min(Math.max(p.paidBoxes - 70, 0), 50);
+    const tier120 = Math.min(Math.max(p.paidBoxes - 120, 0), 50);
+    const tier150 = Math.max(p.paidBoxes - 170, 0), 999);
+    const dailyCost = tier50 * 50 + tier80 * 80 + tier100 * 100 + tier120 * 120 + tier150 * 150;
     const cost = dailyCost * p.days;
     const boxKeys = (p.paidBoxes + p.freeBoxes) * p.keysPerBox;
     const regenMinutes = p.keyPass ? 2 : 3;
