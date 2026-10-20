@@ -9,14 +9,15 @@ test("normal and nightmare scenarios, with and without the key pass", () => {
     ["nightmare", false, 5341, 1300, -2320, 5440],
     ["nightmare", true, 5505, 1340, 60, 8080]
   ]) {
-    const r = calculate({ mode, keyPass });
+    const heroesPerRun = mode === "normal" ? 5 : 8;
+    const r = calculate({ mode, keyPass, heroesPerRun });
     assert.equal(r.runs, runs);
     assert.equal(r.bonus, bonus);
     assert.equal(r.without.profit, without);
     assert.equal(r.withMonthly.profit, withMonthly);
     assert.equal(r.cost, 80000);
     assert.equal(r.dailyKeys, keyPass ? 720 : 480);
-    assert.equal(calculate({ mode, keyPass, monthly: false }).selected.profit, without);
+    assert.equal(calculate({ mode, keyPass, heroesPerRun, monthly: false }).selected.profit, without);
   }
 });
 test("paid box tier boundaries; free boxes add keys without cost", () => {
@@ -48,6 +49,21 @@ test("target EXP is fixed at 12,500 even if older saved values override it", () 
   assert.deepEqual(calculate({ targetExp: 0 }), calculate({}));
 });
 test("invalid values are rejected instead of showing misleading totals", () => {
-  for (const input of [{days:NaN},{days:-1},{days:1.5},{exp:0},{mode:"unknown"},{paidBoxes:Infinity}])
+  for (const input of [{days:NaN},{days:-1},{days:1.5},{exp:0},{mode:"unknown"},{paidBoxes:Infinity},{heroesPerRun:0},{heroesPerRun:1.5},{heroesPerRun:NaN}])
     assert.throws(() => calculate(input));
+});
+test("locked rewards and keys ignore stale saved overrides", () => {
+  assert.deepEqual(calculate({ keysPerBox: 1, rubyPerHero: 999, bonusKeys: 100 }), calculate({}));
+});
+test("team size changes rewards independently of mode and key consumption", () => {
+  for (const mode of ["normal", "nightmare"]) {
+    const three = calculate({ mode, heroesPerRun: 3 });
+    const seven = calculate({ mode, heroesPerRun: 7 });
+    assert.equal(three.runs, seven.runs);
+    assert.equal(three.bonus, seven.bonus);
+    assert.equal(three.totalKeys, seven.totalKeys);
+    assert.equal(three.batchRuby, 60);
+    assert.equal(seven.batchRuby, 140);
+    assert.ok(seven.selected.ruby > three.selected.ruby);
+  }
 });

@@ -6,9 +6,9 @@
   <meta name="theme-color" content="#11131b">
   <meta name="description" content="เครื่องคำนวณฟาร์มรูบี้ 7K เปรียบเทียบโหมดปกติและฝันร้าย พร้อมคำนวณกุญแจ EXP และกำไรสุทธิ">
   <title>7K Rubiez — เครื่องคำนวณฟาร์มรูบี้</title>
-  <link rel="stylesheet" href="./styles.css?v=2">
-  <script src="./calculator.js?v=2" defer></script>
-  <script src="./app.js?v=2" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=3">
+  <script src="./calculator.js?v=3" defer></script>
+  <script src="./app.js?v=3" defer></script>
 </head>
 <body>
 <header class="topbar">
@@ -23,10 +23,12 @@
     <section class="panel">
       <div class="section-heading"><span class="step">01</span><h2>เลือกโหมดฟาร์ม</h2></div>
       <fieldset class="mode-grid"><legend class="sr-only">โหมดฟาร์ม</legend>
-        <label class="mode-card"><input type="radio" name="mode" value="normal" checked><span class="mode-icon" aria-hidden="true">☀</span><strong>ฟาร์มปกติ</strong><span>5 ตัว · 6 กุญแจ/รอบ</span><small>100 รูบี้/ชุดเมื่อตัน*</small></label>
-        <label class="mode-card"><input type="radio" name="mode" value="nightmare"><span class="mode-icon" aria-hidden="true">☾</span><strong>ฟาร์มฝันร้าย</strong><span>8 ตัว · 12 กุญแจ/รอบ</span><small>160 รูบี้/ชุดเมื่อตัน*</small></label>
+        <label class="mode-card"><input type="radio" name="mode" value="normal" checked><span class="mode-icon" aria-hidden="true">☀</span><strong>ฟาร์มปกติ</strong><span>6 กุญแจ/รอบ</span><small>รับโบนัสทุก 160 รอบ</small></label>
+        <label class="mode-card"><input type="radio" name="mode" value="nightmare"><span class="mode-icon" aria-hidden="true">☾</span><strong>ฟาร์มฝันร้าย</strong><span>12 กุญแจ/รอบ</span><small>รับโบนัสทุก 80 รอบ</small></label>
       </fieldset>
       <p class="micro" id="mode-note"></p>
+      <div class="fields team-fields"><label>จำนวนมอนที่ฟาร์ม / รอบ<div class="input-wrap"><input name="heroesPerRun" type="number" min="1" max="1000000" step="1" value="5" required aria-describedby="heroes-note"><span>ตัว</span></div></label></div>
+      <p class="micro" id="heroes-note"></p>
       <label class="toggle-row"><span><strong>บัฟรายเดือน EXP +10%</strong><small>เพิ่ม EXP ที่ได้รับต่อตัวต่อรอบ</small></span><input type="checkbox" name="monthly" checked role="switch"><span class="switch" aria-hidden="true"></span></label>
       <label class="toggle-row"><span><strong>พาสกุญแจ</strong><small id="pass-note">ฟื้นฟู 1 ดอกทุก 3 นาที · 480 ดอก/วัน</small></span><input type="checkbox" name="keyPass" role="switch"><span class="switch" aria-hidden="true"></span></label>
     </section>
@@ -35,7 +37,7 @@
       <div class="fields">
         <label>กล่องที่ซื้อ / วัน<div class="input-wrap"><input name="paidBoxes" type="number" min="0" max="1000000" step="1" value="120" required><span>กล่อง</span></div></label>
         <label>กล่องฟรี / วัน<div class="input-wrap"><input name="freeBoxes" type="number" min="0" max="1000000" step="1" value="1" required><span>กล่อง</span></div></label>
-        <label>กุญแจต่อกล่อง<div class="input-wrap"><input name="keysPerBox" type="number" min="1" max="1000000" step="1" value="60" required><span>ดอก</span></div></label>
+        <label>กุญแจต่อกล่อง (คงที่)<div class="input-wrap"><input name="keysPerBox" type="number" value="60" readonly><span>ดอก</span></div></label>
         <label>ระยะเวลาฟาร์ม<div class="input-wrap"><input name="days" type="number" min="0" max="1000000" step="1" value="8" required><span>วัน</span></div></label>
       </div>
       <div class="price-strip"><span>20 กล่องแรก <b>50</b></span><span>50 กล่องถัดไป <b>80</b></span><span>กล่องที่ 71+ <b>100</b></span></div>
@@ -46,11 +48,11 @@
       <div class="fields">
         <label>EXP ต่อตัว / รอบ<div class="input-wrap"><input name="exp" type="number" min="1" max="1000000" step="1" value="1200" required><span>EXP</span></div></label>
         <label>EXP ที่ต้องใช้จนตัน (คงที่)<div class="input-wrap"><input name="targetExp" type="number" value="12500" readonly><span>EXP</span></div></label>
-        <label>รูบี้ต่อตัวเมื่อตัน<div class="input-wrap"><input name="rubyPerHero" type="number" min="0" max="1000000" step="1" value="20" required><span>รูบี้</span></div></label>
-        <label>กุญแจต่อการรับโบนัส<div class="input-wrap"><input name="bonusKeys" type="number" min="0" max="1000000" step="1" value="20" required><span>ดอก</span></div></label>
+        <label>รูบี้ต่อตัวเมื่อตัน (คงที่)<div class="input-wrap"><input name="rubyPerHero" type="number" value="20" readonly><span>รูบี้</span></div></label>
+        <label>กุญแจต่อการรับโบนัส (คงที่)<div class="input-wrap"><input name="bonusKeys" type="number" value="20" readonly><span>ดอก</span></div></label>
         <label>กุญแจฟื้นฟู / วัน (อัตโนมัติ)<div class="input-wrap"><input name="dailyKeys" type="number" value="480" readonly aria-describedby="regen-note"><span>ดอก</span></div></label>
         <label>กุญแจฟรีอื่น ๆ / วัน<div class="input-wrap"><input name="extraKeys" type="number" min="0" max="1000000" step="1" value="110" required><span>ดอก</span></div></label>
-      </div><p class="micro" id="regen-note">กุญแจฟื้นฟูคิดเต็ม 24 ชั่วโมง โดยไม่มีช่วงกุญแจเต็มจนหยุดฟื้นฟู</p><p class="micro">* รูบี้ต่อชุดอิง 20 รูบี้ต่อตัว · EXP เริ่มต้นจาก Excel ปรับให้ตรงกับด่านที่ฟาร์มได้</p>
+      </div><p class="micro" id="regen-note">กุญแจฟื้นฟูคิดเต็ม 24 ชั่วโมง โดยไม่มีช่วงกุญแจเต็มจนหยุดฟื้นฟู</p><p class="micro">รูบี้ต่อชุดอิง 20 รูบี้ต่อตัว · EXP ต่อรอบเริ่มต้นจาก Excel ปรับให้ตรงกับด่านที่ฟาร์มได้</p>
     </section>
   </form>
   <div class="results">

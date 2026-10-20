@@ -1,5 +1,5 @@
 "use strict";
-const { defaults, calculate, modes } = RubyCalc;
+const { defaults, fixed, calculate, modes } = RubyCalc;
 const form = document.querySelector("#settings");
 const storageKey = "7k-rubiez-v1";
 const nf = new Intl.NumberFormat("th-TH", { maximumFractionDigits: 2 });
@@ -7,7 +7,7 @@ const text = (id, value) => { document.getElementById(id).textContent = value; }
 function read() {
   const values = { mode: form.elements.mode.value, monthly: form.elements.monthly.checked, keyPass: form.elements.keyPass.checked };
   for (const [key, value] of Object.entries(defaults)) {
-    if (typeof value === "number") values[key] = key === "targetExp" ? defaults.targetExp : (form.elements[key].value === "" ? NaN : Number(form.elements[key].value));
+    if (typeof value === "number") values[key] = key in fixed ? fixed[key] : (form.elements[key].value === "" ? NaN : Number(form.elements[key].value));
   }
   return values;
 }
@@ -15,7 +15,7 @@ function fill(p) {
   form.elements.mode.value = p.mode;
   form.elements.monthly.checked = p.monthly;
   form.elements.keyPass.checked = p.keyPass;
-  for (const [key, value] of Object.entries(defaults)) if (typeof value === "number") form.elements[key].value = key === "targetExp" ? defaults.targetExp : p[key];
+  for (const [key, value] of Object.entries(defaults)) if (typeof value === "number") form.elements[key].value = key in fixed ? fixed[key] : p[key];
 }
 function render() {
   const p = read();
@@ -27,7 +27,8 @@ function render() {
     text("pass-note", `ฟื้นฟู 1 ดอกทุก ${r.regenMinutes} นาที · ${r.dailyKeys} ดอก/วัน`);
     error.hidden = true;
     document.getElementById("result-content").hidden = false;
-    text("mode-note", `${r.mode.label}: รับ ${nf.format(p.bonusKeys)} กุญแจทุก ${r.mode.milestone} รอบ · ${nf.format(r.batchRuby)} รูบี้ต่อชุดเมื่อตัน`);
+    text("mode-note", `${r.mode.label}: ใช้ ${r.mode.keys} กุญแจ/รอบ · รับ ${p.bonusKeys} กุญแจทุก ${r.mode.milestone} รอบ`);
+    text("heroes-note", `ฟาร์ม ${nf.format(p.heroesPerRun)} ตัว/รอบ · ${nf.format(r.batchRuby)} รูบี้ต่อชุดเมื่อตัน · เปลี่ยนโหมดแล้วจำนวนมอนจะคงเดิม`);
     text("period", `${nf.format(p.days)} วัน`);
     text("profit", (r.selected.profit > 0 ? "+" : "") + nf.format(r.selected.profit));
     document.getElementById("profit").classList.toggle("negative", r.selected.profit < 0);
@@ -58,8 +59,10 @@ function render() {
 try {
   const saved = JSON.parse(localStorage.getItem(storageKey));
   if (saved && modes[saved.mode] && typeof saved.monthly === "boolean") {
-    calculate({ ...defaults, ...saved });
-    fill({ ...defaults, ...saved });
+    // Preserve the previous mode's team size for users upgrading from v1/v2.
+    const restored = { ...defaults, ...saved, heroesPerRun: saved.heroesPerRun ?? (saved.mode === "nightmare" ? 8 : 5), ...fixed };
+    calculate(restored);
+    fill(restored);
   }
 } catch { /* Invalid or unavailable storage: use workbook defaults. */ }
 form.addEventListener("input", render);

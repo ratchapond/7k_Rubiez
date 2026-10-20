@@ -1,22 +1,22 @@
 (function (root) {
   "use strict";
   const modes = {
-    normal: { label: "ฟาร์มปกติ", heroes: 5, keys: 6, milestone: 160 },
-    nightmare: { label: "ฟาร์มฝันร้าย", heroes: 8, keys: 12, milestone: 80 }
+    normal: { label: "ฟาร์มปกติ", keys: 6, milestone: 160 },
+    nightmare: { label: "ฟาร์มฝันร้าย", keys: 12, milestone: 80 }
   };
+  const fixed = Object.freeze({ keysPerBox: 60, targetExp: 12500, rubyPerHero: 20, bonusKeys: 20 });
   const defaults = Object.freeze({
-    mode: "normal", paidBoxes: 120, freeBoxes: 1, keysPerBox: 60, days: 8,
-    exp: 1200, targetExp: 12500, rubyPerHero: 20,
-    keyPass: false, extraKeys: 110, bonusKeys: 20, monthly: true
+    mode: "normal", paidBoxes: 120, freeBoxes: 1, days: 8, heroesPerRun: 5,
+    exp: 1200, keyPass: false, extraKeys: 110, monthly: true, ...fixed
   });
   function calculate(input) {
-    const p = { ...defaults, ...input, targetExp: defaults.targetExp };
+    const p = { ...defaults, ...input, ...fixed };
     if (!modes[p.mode]) throw new Error("กรุณาเลือกโหมดฟาร์ม");
     for (const key of Object.keys(defaults)) {
       if (typeof defaults[key] !== "number") continue;
-      const positive = ["keysPerBox", "exp", "targetExp"].includes(key);
+      const positive = ["keysPerBox", "exp", "targetExp", "heroesPerRun"].includes(key);
       if (!Number.isSafeInteger(p[key]) || p[key] < (positive ? 1 : 0) || p[key] > 1000000)
-        throw new Error("กรอกจำนวนเต็ม 0–1,000,000 และค่า EXP / กุญแจต่อกล่องต้องมากกว่า 0");
+        throw new Error("กรอกจำนวนเต็ม 0–1,000,000 โดย EXP และจำนวนมอนต่อรอบต้องมากกว่า 0");
     }
     const mode = modes[p.mode];
     const tier50 = Math.min(p.paidBoxes, 20);
@@ -38,7 +38,7 @@
       const exp = p.exp * (monthly ? 110 : 100) / 100;
       const runsPerHero = Math.ceil(p.targetExp * 100 / (p.exp * (monthly ? 110 : 100)));
       // Preserve workbook B35/B36: pooled character progress, rounded down.
-      const heroes = Math.floor(runs * mode.heroes / runsPerHero);
+      const heroes = Math.floor(runs * p.heroesPerRun / runsPerHero);
       const ruby = heroes * p.rubyPerHero;
       return { exp, runsPerHero, heroes, ruby, profit: ruby - cost };
     };
@@ -47,13 +47,13 @@
       mode, dailyKeys, regenMinutes, tier50, tier80, tier100, dailyCost, cost, boxKeys, totalKeys, baseRuns,
       awards, bonus, runs, remainingKeys: totalKeys + bonus - runs * mode.keys,
       without, withMonthly, selected: p.monthly ? withMonthly : without,
-      batchRuby: mode.heroes * p.rubyPerHero
+      batchRuby: p.heroesPerRun * p.rubyPerHero
     };
-    if ([cost, totalKeys, runs * mode.heroes, without.ruby, withMonthly.ruby, bonus]
+    if ([cost, totalKeys, runs * p.heroesPerRun, without.ruby, withMonthly.ruby, bonus]
       .some(n => !Number.isSafeInteger(n))) throw new Error("ค่ามากเกินช่วงคำนวณ กรุณาลดจำนวนลง");
     return result;
   }
-  const api = { modes, defaults, calculate };
+  const api = { modes, fixed, defaults, calculate };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.RubyCalc = api;
 })(typeof globalThis !== "undefined" ? globalThis : this);
